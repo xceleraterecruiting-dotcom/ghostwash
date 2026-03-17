@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Users } from 'lucide-react';
+import { Users, Download } from 'lucide-react';
 
 interface Member {
   id: string;
@@ -14,10 +14,12 @@ interface Member {
   plan_name: string | null;
   plan_price_cents: number | null;
   plan_status: string;
+  payment_status: string | null;
   churn_score: number;
   wash_count_30d: number;
   wash_count_total: number;
   last_wash_date: string | null;
+  tags: string[] | null;
   created_at: string;
 }
 
@@ -105,6 +107,44 @@ export default function MembersPage() {
     return `$${(cents / 100).toFixed(2)}`;
   };
 
+  const handleExportCSV = () => {
+    if (members.length === 0) return;
+
+    // CSV headers
+    const headers = ['name', 'email', 'phone', 'plan', 'price', 'status', 'churn_score', 'last_wash_date', 'payment_status', 'tags'];
+
+    // CSV rows
+    const rows = members.map((m) => [
+      `${m.first_name || ''} ${m.last_name || ''}`.trim(),
+      m.email || '',
+      m.phone || '',
+      m.plan_name || '',
+      m.plan_price_cents ? (m.plan_price_cents / 100).toFixed(2) : '',
+      m.plan_status || '',
+      m.churn_score?.toFixed(0) || '0',
+      m.last_wash_date ? new Date(m.last_wash_date).toLocaleDateString() : '',
+      m.payment_status || 'current',
+      (m.tags || []).join('; '),
+    ]);
+
+    // Build CSV content
+    const csvContent = [
+      headers.join(','),
+      ...rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
+    ].join('\n');
+
+    // Download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `members-${siteName || siteId}-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -114,12 +154,22 @@ export default function MembersPage() {
             <h1 className="text-2xl font-bold text-foreground">{siteName || 'Members'}</h1>
             <p className="text-muted text-sm">Membership Agent Dashboard</p>
           </div>
-          <Link
-            href={`/dashboard/${siteId}/import`}
-            className="bg-surface border border-border hover:border-border-hover hover:bg-surface-hover text-foreground px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150"
-          >
-            Import More
-          </Link>
+          <div className="flex gap-3">
+            <button
+              onClick={handleExportCSV}
+              disabled={members.length === 0}
+              className="flex items-center gap-2 bg-surface border border-border hover:border-border-hover hover:bg-surface-hover text-foreground px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Download size={16} />
+              Export CSV
+            </button>
+            <Link
+              href={`/dashboard/${siteId}/import`}
+              className="bg-surface border border-border hover:border-border-hover hover:bg-surface-hover text-foreground px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150"
+            >
+              Import More
+            </Link>
+          </div>
         </div>
       </header>
 

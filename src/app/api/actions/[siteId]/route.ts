@@ -23,17 +23,10 @@ export async function GET(
 
     const supabase = createServerClient();
 
-    // Build query - join with members to get names
+    // Build query
     let query = supabase
       .from('agent_actions')
-      .select(`
-        *,
-        members:target_id (
-          first_name,
-          last_name,
-          email
-        )
-      `, { count: 'exact' })
+      .select('*', { count: 'exact' })
       .eq('site_id', siteId);
 
     if (agent !== 'all') {
@@ -53,6 +46,31 @@ export async function GET(
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    // Get member details for actions targeting members
+    const memberIds = actions
+      ?.filter((a) => a.target_type === 'member' && a.target_id)
+      .map((a) => a.target_id) || [];
+
+    let memberMap: Record<string, { first_name: string; last_name: string; email: string }> = {};
+
+    if (memberIds.length > 0) {
+      const { data: members } = await supabase
+        .from('members')
+        .select('id, first_name, last_name, email')
+        .in('id', memberIds);
+
+      memberMap = (members || []).reduce((acc, m) => {
+        acc[m.id] = { first_name: m.first_name, last_name: m.last_name, email: m.email };
+        return acc;
+      }, {} as Record<string, { first_name: string; last_name: string; email: string }>);
+    }
+
+    // Attach member data to actions
+    const actionsWithMembers = actions?.map((action) => ({
+      ...action,
+      members: action.target_type === 'member' ? memberMap[action.target_id] || null : null,
+    })) || [];
 
     // Get summary stats
     const { data: stats } = await supabase
@@ -74,7 +92,7 @@ export async function GET(
     });
 
     return NextResponse.json({
-      actions,
+      actions: actionsWithMembers,
       summary,
       pagination: {
         page,

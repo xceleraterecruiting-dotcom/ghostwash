@@ -27,6 +27,8 @@ interface Member {
   first_name: string;
   last_name: string;
   plan_name: string;
+  plan_price_cents: number | null;
+  plan_status: string;
   churn_score: number;
   last_wash_date: string | null;
 }
@@ -107,7 +109,31 @@ export default function DashboardPage() {
   const totalMembers = members.length;
   const activeMembers = members.filter((m) => (m.churn_score || 0) < 60).length;
   const atRiskMembers = members.filter((m) => (m.churn_score || 0) >= 60).length;
-  const revenueSaved = 0; // Calculate from actions
+
+  // Calculate revenue saved from successful interventions
+  // For every executed action on a member who is still active 14+ days later, count their plan price
+  const fourteenDaysAgo = Date.now() - 14 * 24 * 60 * 60 * 1000;
+  const memberMap = new Map(members.map((m) => [m.id, m]));
+
+  const revenueSaved = actions
+    .filter((a) => {
+      // Only count executed interventions older than 14 days
+      if (a.status !== 'executed') return false;
+      const actionDate = new Date(a.created_at).getTime();
+      if (actionDate > fourteenDaysAgo) return false;
+
+      // Check if member is still active
+      const member = memberMap.get(a.target_id);
+      if (!member) return false;
+      if (member.plan_status !== 'active') return false;
+
+      return true;
+    })
+    .reduce((sum, a) => {
+      const member = memberMap.get(a.target_id);
+      if (!member || !member.plan_price_cents) return sum;
+      return sum + member.plan_price_cents;
+    }, 0) / 100; // Convert cents to dollars
 
   // Get at-risk members sorted by churn score
   const atRiskList = members
@@ -268,10 +294,9 @@ export default function DashboardPage() {
           />
           <StatCard
             icon={<DollarSign size={20} />}
-            value={`$${revenueSaved}`}
+            value={`$${revenueSaved.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`}
             label="Revenue Saved"
             valueColor="text-accent"
-            trend={{ value: 0, up: true }}
           />
         </div>
 

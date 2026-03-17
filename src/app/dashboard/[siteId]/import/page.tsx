@@ -11,7 +11,7 @@ export default function ImportPage() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [result, setResult] = useState<{ imported: number } | null>(null);
+  const [result, setResult] = useState<{ imported: number; new: number; updated: number } | null>(null);
   const [dragActive, setDragActive] = useState(false);
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -70,7 +70,7 @@ export default function ImportPage() {
         throw new Error(data.error || 'Upload failed');
       }
 
-      setResult({ imported: data.imported });
+      setResult({ imported: data.imported, new: data.new || 0, updated: data.updated || 0 });
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -157,7 +157,9 @@ export default function ImportPage() {
           {result && (
             <div className="text-success bg-success/10 border border-success/20 rounded-xl p-4 text-center">
               <div className="text-2xl font-bold font-mono">{result.imported}</div>
-              <div className="text-sm">members imported successfully</div>
+              <div className="text-sm">
+                members imported: {result.new} new, {result.updated} updated
+              </div>
             </div>
           )}
 
