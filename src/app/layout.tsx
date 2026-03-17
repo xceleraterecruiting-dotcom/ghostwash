@@ -10,7 +10,19 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'GhostWash — AI-Powered Car Wash Member Retention',
-  description: 'GhostWash predicts which members are about to cancel and saves them automatically. No dashboards. No campaigns. Just revenue recovered on autopilot.',
+  description: 'Predict churn. Save members. Recover payments. All on autopilot.',
+  metadataBase: new URL('https://ghostwash.ai'),
+  openGraph: {
+    title: 'GhostWash',
+    description: 'Your car wash runs itself now.',
+    siteName: 'GhostWash',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'GhostWash',
+    description: 'Your car wash runs itself now.',
+  },
 };
 
 export default function RootLayout({

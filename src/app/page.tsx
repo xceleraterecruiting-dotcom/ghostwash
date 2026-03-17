@@ -1,718 +1,477 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, Check, ArrowRight, Zap, CreditCard, Users } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowUpRight, ChevronDown, Check, Menu } from 'lucide-react';
 import { Logo } from '@/components/Logo';
-import { DailyBriefingMock } from '@/components/DailyBriefingMock';
 import { WaitlistForm } from '@/components/WaitlistForm';
-
-// Intersection observer hook for scroll animations
-function useInView(threshold = 0.1) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isInView, setIsInView] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-        }
-      },
-      { threshold }
-    );
-
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
-    return () => observer.disconnect();
-  }, [threshold]);
-
-  return { ref, isInView };
-}
-
-// Animated section wrapper
-function AnimatedSection({
-  children,
-  className = '',
-  delay = 0,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-}) {
-  const { ref, isInView } = useInView();
-
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ease-out ${className}`}
-      style={{
-        opacity: isInView ? 1 : 0,
-        transform: isInView ? 'translateY(0)' : 'translateY(20px)',
-        transitionDelay: `${delay}ms`,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
+import { useState } from 'react';
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Comparison data
-  const comparisons = [
-    {
-      traditional: 'Shows you a churn report',
-      ghostwash: 'Saves the member before they cancel',
-    },
-    {
-      traditional: 'Alerts you about a declined card',
-      ghostwash: 'Retries it at the optimal time automatically',
-    },
-    {
-      traditional: 'Sends you a dashboard to review',
-      ghostwash: 'Sends you a 5-minute morning briefing',
-    },
-    {
-      traditional: 'Requires you to build campaigns',
-      ghostwash: 'Runs campaigns autonomously within your rules',
-    },
-    {
-      traditional: 'Charges 4% commission on online sales',
-      ghostwash: '0% commission. Forever.',
-    },
-  ];
-
-  // Features data
-  const features = [
-    {
-      icon: Zap,
-      title: 'Saves churning members',
-      tagline: "You don't build the campaign. You don't write the message. GhostWash handles it.",
-      description:
-        "AI scores every member every 6 hours. When someone is about to leave, GhostWash picks the best message, the best offer, the best channel - and sends it. You wake up to 'GhostWash saved 4 members last night.'",
-    },
-    {
-      icon: CreditCard,
-      title: 'Recovers failed payments',
-      tagline: "No manual retries. No chasing. It just happens.",
-      description:
-        "When a credit card declines, GhostWash does not just retry on day 3. It figures out when that member gets paid and retries at the exact right time. Recovery rate: 25-40% higher than standard retry.",
-    },
-    {
-      icon: Users,
-      title: 'Onboards new members',
-      tagline: "Every new member gets a 30-day sequence. You set it up once. Never again.",
-      description:
-        'Every new member gets a personalized 30-day welcome sequence that builds the wash habit. Members who wash 2+ times in their first month retain at 3x the rate.',
-    },
-  ];
-
-  // Trust metrics
-  const trustMetrics = [
-    { value: '0%', label: 'commission' },
-    { value: '$0', label: 'setup fee' },
-    { value: '14-day', label: 'free trial' },
-    { value: 'Any POS', label: 'compatible' },
-  ];
-
-  // Pricing plans
-  const plans = [
-    {
-      name: 'Operator',
-      price: '$699',
-      foundingPrice: '$499',
-      period: '/month per site',
-      description: 'For single and multi-site operators',
-      features: [
-        'Churn prediction + auto-intervention',
-        'Payment recovery',
-        'Member onboarding sequences',
-        'Daily briefings',
-        'Template editor',
-        'Guardrails + tier controls',
-        '0% commission on member signups',
-        'Unlimited email and SMS',
-      ],
-    },
-    {
-      name: 'Portfolio',
-      price: '$999',
-      foundingPrice: '$749',
-      period: '/month per site',
-      description: 'For 5+ location operators',
-      features: [
-        'Everything in Operator',
-        'Multi-site command center',
-        'Cross-site benchmarking',
-        'Dynamic pricing engine',
-        'Staff scheduling',
-        'Chemical auto-ordering',
-        'Dedicated account manager',
-      ],
-      highlighted: true,
-    },
-  ];
-
-  // Competitive comparison data
-  const competitiveComparison = [
-    {
-      row: 'Problem solving',
-      traditional: 'Shows you the problem',
-      callCenter: 'Fixes it with agents',
-      ghostwash: 'Fixes it autonomously',
-    },
-    {
-      row: 'Cost',
-      traditional: '$765-999/mo + 4% commission',
-      callCenter: '$1,500+/mo',
-      ghostwash: '$699/mo, 0% forever',
-    },
-    {
-      row: 'Your time',
-      traditional: '30-60 min/day of your time',
-      callCenter: '0 min but no membership mgmt',
-      ghostwash: '5-min morning briefing',
-    },
-    {
-      row: 'Campaigns',
-      traditional: 'You build campaigns',
-      callCenter: 'Humans handle calls only',
-      ghostwash: 'Full lifecycle on autopilot',
-    },
-    {
-      row: 'Messaging',
-      traditional: 'No inbound messaging',
-      callCenter: 'Phone only, business hours',
-      ghostwash: 'SMS 24/7 + cancel saves',
-    },
-  ];
-
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden relative">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm border-b border-border">
-        <div className="max-w-content mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <Logo className="w-8 h-10 text-white" />
-            <span className="text-lg font-semibold tracking-tight hidden sm:inline">
-              GhostWash
-            </span>
+      <nav className="fixed top-0 left-0 right-0 z-40 px-4 sm:px-6 py-4 bg-black/80 backdrop-blur-sm border-b border-white/5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <Logo className="w-6 h-7 sm:w-7 sm:h-8 text-white" />
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-sm text-muted hover:text-white transition">
-              Features
-            </a>
-            <a href="#pricing" className="text-sm text-muted hover:text-white transition">
-              Pricing
-            </a>
-            <Link href="/login" className="text-sm text-muted hover:text-white transition">
-              Sign In
-            </Link>
-            <a href="#waitlist" className="btn-primary text-sm">
-              Join the Waitlist
-            </a>
+          <div className="hidden md:flex items-center gap-1 border border-white/10 rounded-full px-2 py-1.5">
+            <a href="#" className="px-4 py-1.5 text-sm text-white/60 hover:text-white transition">Home</a>
+            <a href="#features" className="px-4 py-1.5 text-sm text-white/60 hover:text-white transition">Features</a>
+            <a href="#pricing" className="px-4 py-1.5 text-sm text-white/60 hover:text-white transition">Pricing</a>
+            <a href="#waitlist" className="px-4 py-1.5 text-sm bg-white text-black rounded-full hover:bg-white/90 transition font-medium">Get Started</a>
           </div>
 
           {/* Mobile menu button */}
           <button
-            className="md:hidden p-2 text-muted hover:text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
+            className="md:hidden p-2 text-white/60 hover:text-white transition"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <Menu className="w-5 h-5" />
           </button>
+
+          <Link href="/login" className="hidden md:flex items-center gap-2 text-sm text-white/60 hover:text-white transition">
+            Sign In
+          </Link>
         </div>
 
         {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-black border-t border-border px-6 py-6 space-y-4">
-            <a
-              href="#features"
-              className="block text-muted hover:text-white transition py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Features
-            </a>
-            <a
-              href="#pricing"
-              className="block text-muted hover:text-white transition py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Pricing
-            </a>
-            <Link
-              href="/login"
-              className="block text-muted hover:text-white transition py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Sign In
-            </Link>
-            <a
-              href="#waitlist"
-              className="btn-primary block text-center mt-4"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Join the Waitlist
-            </a>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-sm border-b border-white/5 px-4 py-4"
+          >
+            <div className="flex flex-col gap-3">
+              <a href="#" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/60 hover:text-white transition">Home</a>
+              <a href="#features" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/60 hover:text-white transition">Features</a>
+              <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/60 hover:text-white transition">Pricing</a>
+              <a href="/login" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/60 hover:text-white transition">Sign In</a>
+              <a href="#waitlist" onClick={() => setMobileMenuOpen(false)} className="py-2 px-4 bg-white text-black rounded-full text-center font-medium">Get Started</a>
+            </div>
+          </motion.div>
         )}
       </nav>
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
-        {/* Background image */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: 'url(/hero-bg.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-          }}
-        />
-        {/* Dark overlay - 92% for subtle texture, text readability priority */}
-        <div className="absolute inset-0 bg-black/[0.92] z-[1]" />
-        {/* Right-side fade for briefing card */}
-        <div
-          className="absolute inset-0 z-[2]"
-          style={{
-            background:
-              'linear-gradient(to right, transparent 0%, transparent 50%, rgba(0,0,0,0.5) 70%, black 100%)',
-          }}
-        />
-        {/* Bottom fade */}
-        <div
-          className="absolute inset-0 z-[3]"
-          style={{
-            background:
-              'linear-gradient(to bottom, transparent 0%, transparent 75%, black 100%)',
-          }}
-        />
-
-        <div className="max-w-content mx-auto px-6 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left: Copy */}
-            <div className="space-y-8">
-              <AnimatedSection>
-                <h1 className="text-4xl md:text-5xl lg:text-display-lg font-semibold tracking-tight text-balance">
-                  The AI that runs your car wash while you sleep
-                </h1>
-              </AnimatedSection>
-
-              <AnimatedSection delay={100}>
-                <p className="text-lg md:text-xl text-muted leading-relaxed max-w-xl">
-                  GhostWash predicts which members are about to cancel - and saves them
-                  automatically. No dashboards to check. No campaigns to build. Just revenue
-                  recovered on autopilot.
-                </p>
-              </AnimatedSection>
-
-              <AnimatedSection delay={200}>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                  <a href="#waitlist" className="btn-primary inline-flex items-center gap-2">
-                    Join the Waitlist
-                    <ArrowRight className="w-4 h-4" />
-                  </a>
-                  <a
-                    href="#how-it-works"
-                    className="text-sm text-muted hover:text-white transition underline underline-offset-4"
-                  >
-                    See how it works
-                  </a>
-                </div>
-              </AnimatedSection>
-            </div>
-
-            {/* Right: Product mock */}
-            <AnimatedSection delay={300} className="lg:pl-8">
-              <DailyBriefingMock />
-            </AnimatedSection>
+      {/* Hero */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 pt-20 pb-12 sm:pt-0 sm:pb-0">
+        {/* Floating stat nodes - hidden on mobile */}
+        <motion.div
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="hidden lg:flex absolute top-[22%] left-[18%] items-center gap-2"
+        >
+          <div className="w-2 h-2 bg-white rounded-full" />
+          <div className="text-sm border border-white/10 rounded px-3 py-1.5">
+            <div className="text-white font-medium">Members</div>
+            <div className="text-white/50 text-xs">2,847</div>
           </div>
+        </motion.div>
+
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="hidden lg:flex absolute top-[28%] right-[15%] items-center gap-2"
+        >
+          <div className="w-2 h-2 bg-white rounded-full" />
+          <div className="text-sm border border-white/10 rounded px-3 py-1.5">
+            <div className="text-white font-medium">Recovered</div>
+            <div className="text-white/50 text-xs">$24,580</div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          animate={{ y: [0, -8, 0] }}
+          transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+          className="hidden lg:flex absolute bottom-[32%] left-[12%] items-center gap-2"
+        >
+          <div className="w-2 h-2 bg-white rounded-full" />
+          <div className="text-sm border border-white/10 rounded px-3 py-1.5">
+            <div className="text-white font-medium">Saved</div>
+            <div className="text-white/50 text-xs">127 members</div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          animate={{ y: [0, 12, 0] }}
+          transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="hidden lg:flex absolute bottom-[38%] right-[18%] items-center gap-2"
+        >
+          <div className="w-2 h-2 bg-white rounded-full" />
+          <div className="text-sm border border-white/10 rounded px-3 py-1.5">
+            <div className="text-white font-medium">Churn Rate</div>
+            <div className="text-white/50 text-xs">2.1%</div>
+          </div>
+        </motion.div>
+
+        {/* Content */}
+        <div className="relative z-10 text-center max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <a
+              href="#waitlist"
+              className="inline-flex items-center gap-2 border border-white/20 rounded-full px-3 sm:px-4 py-2 text-xs sm:text-sm mb-6 sm:mb-8 hover:bg-white/5 transition"
+            >
+              <span className="w-1.5 h-1.5 bg-white rounded-full" />
+              Join the founding operators
+              <ArrowUpRight className="w-3 h-3" />
+            </a>
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium tracking-tight leading-[1.1] sm:leading-[1.05] mb-5 sm:mb-6">
+              Your car wash
+              <br />
+              <span className="text-white/40">runs itself now.</span>
+            </h1>
+
+            <p className="text-base sm:text-lg text-white/50 max-w-md sm:max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-2 sm:px-0">
+              Predict churn. Save members. Recover payments. All on autopilot.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+              <a
+                href="#waitlist"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-black px-6 py-3.5 sm:py-3 rounded-full text-sm font-medium hover:bg-white/90 transition"
+              >
+                Get Started
+                <ArrowUpRight className="w-4 h-4" />
+              </a>
+              <a
+                href="#features"
+                className="text-white/50 text-sm hover:text-white transition"
+              >
+                See how it works
+              </a>
+            </div>
+          </motion.div>
         </div>
+
+        {/* Scroll indicator - hidden on mobile */}
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="hidden sm:flex absolute bottom-8 left-8 items-center gap-3 text-white/40 text-sm"
+        >
+          <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center">
+            <ChevronDown className="w-4 h-4" />
+          </div>
+          <span>Scroll down</span>
+        </motion.div>
       </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 md:py-32 bg-surface">
-        <div className="max-w-content mx-auto">
-          <AnimatedSection>
-            <h2 className="text-3xl md:text-display font-semibold tracking-tight text-center mb-16">
-              Up and running in 3 steps
+      {/* Features */}
+      <section id="features" className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+            <p className="text-white/40 text-xs sm:text-sm font-medium mb-3 sm:mb-4 tracking-wider uppercase">Capabilities</p>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight mb-3 sm:mb-4">
+              AI that takes action
             </h2>
-          </AnimatedSection>
+            <p className="text-white/50 text-base sm:text-lg max-w-xl mx-auto">
+              Not dashboards. Not reports. Results.
+            </p>
+          </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-px sm:bg-white/10">
             {[
               {
-                step: '1',
-                title: 'Connect your POS',
-                description:
-                  "Export your member list or connect directly. Works with Washify, DRB, Sonny's, and more. Takes 5 minutes.",
+                stat: '23%',
+                title: 'Churn Prevention',
+                description: 'Scores every member. Intervenes before they cancel.',
               },
               {
-                step: '2',
-                title: 'Set your rules',
-                description:
-                  "Tell GhostWash your boundaries: how much to discount, how often to message, what needs your approval. You are always in control.",
+                stat: '40%',
+                title: 'Payment Recovery',
+                description: 'Learns when your members get paid. Retries at the right moment.',
               },
               {
-                step: '3',
-                title: 'Watch it work',
-                description:
-                  "GhostWash starts saving members within 24 hours. You get a daily briefing of everything it did. That is it.",
-              },
-            ].map((item, index) => (
-              <AnimatedSection key={item.step} delay={index * 100}>
-                <div className="bg-black border border-border rounded-xl p-8 h-full">
-                  <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xl font-semibold mb-6">
-                    {item.step}
-                  </div>
-                  <h3 className="text-xl font-semibold mb-4">{item.title}</h3>
-                  <p className="text-muted leading-relaxed">{item.description}</p>
-                </div>
-              </AnimatedSection>
+                stat: '3x',
+                title: 'Member Onboarding',
+                description: '30-day sequences that build the wash habit. Automatically.',
+              }
+            ].map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-black p-6 sm:p-8 lg:p-10 border border-white/10 sm:border-0 hover:bg-white/[0.02] transition-colors"
+              >
+                <div className="text-5xl sm:text-6xl font-light text-white mb-4 sm:mb-6">{feature.stat}</div>
+                <h3 className="text-lg sm:text-xl font-medium mb-2 sm:mb-3">{feature.title}</h3>
+                <p className="text-white/50 text-sm sm:text-base leading-relaxed">{feature.description}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Core Pitch / Comparison Section */}
-      <section className="py-20 md:py-32">
-        <div className="max-w-content mx-auto">
-          <AnimatedSection>
-            <h2 className="text-3xl md:text-display font-semibold tracking-tight text-center mb-6">
-              Other software shows you the problem.
-              <br />
-              <span className="text-accent">GhostWash fixes it.</span>
-            </h2>
-          </AnimatedSection>
+      {/* How it works */}
+      <section className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="order-2 lg:order-1">
+              <p className="text-white/40 text-xs sm:text-sm font-medium mb-3 sm:mb-4 tracking-wider uppercase">Daily Briefings</p>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight mb-4 sm:mb-6">
+                Five minutes. Every morning.
+              </h2>
+              <p className="text-white/50 text-base sm:text-lg mb-6 sm:mb-8">
+                Wake up to results, not a to-do list.
+              </p>
 
-          <AnimatedSection delay={100}>
-            <div className="max-w-4xl mx-auto mt-16">
-              {/* Header row */}
-              <div className="grid grid-cols-2 gap-4 mb-6 px-4">
-                <div className="text-sm text-muted font-medium">Traditional car wash software</div>
-                <div className="text-sm text-white font-medium">GhostWash</div>
-              </div>
-
-              {/* Comparison rows */}
-              <div className="space-y-3">
-                {comparisons.map((row, index) => (
-                  <AnimatedSection key={index} delay={150 + index * 50}>
-                    <div className="grid grid-cols-2 gap-4 bg-surface border border-border rounded-lg p-4">
-                      <div className="flex items-start gap-3 text-muted text-sm md:text-base">
-                        <span className="text-muted/50 mt-0.5">—</span>
-                        <span>{row.traditional}</span>
-                      </div>
-                      <div className="flex items-start gap-3 text-white text-sm md:text-base font-medium">
-                        <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                        <span>{row.ghostwash}</span>
-                      </div>
+              <div className="space-y-3 sm:space-y-4">
+                {[
+                  'Members saved from canceling',
+                  'Payments recovered automatically',
+                  'At-risk members identified',
+                  'Actions taken on your behalf'
+                ].map((item, index) => (
+                  <motion.div
+                    key={item}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex items-center gap-3"
+                  >
+                    <div className="w-5 h-5 rounded-full border border-white/20 flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 text-white" />
                     </div>
-                  </AnimatedSection>
+                    <span className="text-white/70 text-sm sm:text-base">{item}</span>
+                  </motion.div>
                 ))}
               </div>
             </div>
-          </AnimatedSection>
-        </div>
-      </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 md:py-32 bg-surface">
-        <div className="max-w-content mx-auto">
-          <AnimatedSection>
-            <h2 className="text-3xl md:text-display font-semibold tracking-tight text-center mb-16">
-              What GhostWash does while you&apos;re not looking
-            </h2>
-          </AnimatedSection>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <AnimatedSection key={feature.title} delay={index * 100}>
-                <div className="bg-black border border-border rounded-xl p-8 h-full">
-                  <div className="w-12 h-12 rounded-lg bg-accent/10 text-accent flex items-center justify-center mb-6">
-                    <feature.icon className="w-6 h-6" />
+            {/* Phone mockup */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex justify-center order-1 lg:order-2"
+            >
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="relative"
+              >
+                <div className="relative w-64 sm:w-72 bg-white/5 rounded-[2rem] sm:rounded-[2.5rem] p-2.5 sm:p-3 border border-white/10">
+                  <div className="bg-black rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden">
+                    <div className="flex justify-center pt-2.5 sm:pt-3 pb-3 sm:pb-4">
+                      <div className="w-16 sm:w-20 h-4 sm:h-5 bg-white/10 rounded-full" />
+                    </div>
+                    <div className="px-4 sm:px-5 pb-6 sm:pb-8">
+                      <div className="flex items-center gap-2.5 sm:gap-3 mb-4 sm:mb-5">
+                        <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-lg sm:rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                          <Logo className="w-4 sm:w-5 h-5 sm:h-6 text-white" />
+                        </div>
+                        <div>
+                          <div className="text-xs sm:text-sm font-medium text-white">GhostWash</div>
+                          <div className="text-[10px] sm:text-xs text-white/40">Daily Briefing</div>
+                        </div>
+                        <div className="text-[10px] sm:text-xs text-white/30 ml-auto">7:02 AM</div>
+                      </div>
+                      <div className="border border-white/10 rounded-lg sm:rounded-xl p-3 sm:p-4 space-y-1.5 sm:space-y-2">
+                        <p className="text-xs sm:text-sm text-white/70">
+                          Yesterday: <span className="text-white">342 cars</span>, <span className="text-white">$8,450 revenue</span>.
+                        </p>
+                        <p className="text-xs sm:text-sm text-white/40">
+                          4 members saved. 2 payments recovered.
+                        </p>
+                        <p className="text-xs sm:text-sm text-white">
+                          No action needed.
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-accent text-sm font-medium mb-4">{feature.tagline}</p>
-                  <p className="text-muted leading-relaxed">{feature.description}</p>
                 </div>
-              </AnimatedSection>
-            ))}
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* 5-Minute Morning Section */}
-      <section className="py-20 md:py-32">
-        <div className="max-w-content mx-auto">
-          <AnimatedSection>
-            <h2 className="text-3xl md:text-display font-semibold tracking-tight text-center mb-12">
-              Your entire morning with GhostWash
+      {/* Pricing */}
+      <section id="pricing" className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10 sm:mb-12 lg:mb-16">
+            <p className="text-white/40 text-xs sm:text-sm font-medium mb-3 sm:mb-4 tracking-wider uppercase">Pricing</p>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight mb-3 sm:mb-4">
+              Simple, transparent
             </h2>
-          </AnimatedSection>
+            <p className="text-white/50 text-base sm:text-lg">
+              No contracts. No commission. Cancel anytime.
+            </p>
+          </div>
 
-          <AnimatedSection delay={100}>
-            <div className="max-w-md mx-auto">
-              {/* Phone mockup */}
-              <div className="bg-[#1a1a1a] rounded-3xl p-3 shadow-2xl">
-                {/* Phone notch */}
-                <div className="flex justify-center mb-2">
-                  <div className="w-20 h-5 bg-black rounded-full" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            {/* Operator */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0 }}
+              className="border border-white/10 p-6 sm:p-8 hover:border-white/20 transition-colors"
+            >
+              <div className="mb-5 sm:mb-6">
+                <h3 className="text-lg sm:text-xl font-medium mb-2">Operator</h3>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-3xl sm:text-4xl font-light">$849</span>
+                  <span className="text-white/40 text-sm">/mo</span>
                 </div>
-
-                {/* Notification */}
-                <div className="bg-surface border border-border rounded-2xl p-5 space-y-4">
-                  {/* App header */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
-                      <Logo className="w-6 h-7 text-accent" />
-                    </div>
-                    <div>
-                      <p className="text-white text-sm font-medium">GhostWash</p>
-                      <p className="text-muted text-xs">Daily Briefing</p>
-                    </div>
-                    <p className="text-muted text-xs ml-auto">7:02 AM</p>
-                  </div>
-
-                  {/* Message content */}
-                  <div className="space-y-3 text-sm">
-                    <p className="text-white leading-relaxed">
-                      Good morning. Yesterday: <span className="text-accent font-medium">342 cars</span>,{' '}
-                      <span className="text-accent font-medium">$8,450 revenue</span>,{' '}
-                      <span className="text-green-500 font-medium">4 members saved</span>.
-                    </p>
-                    <p className="text-muted leading-relaxed">
-                      Today: Sunny, 78F, projecting 380 cars. Schedule is set. Chemicals stocked.
-                    </p>
-                    <p className="text-white font-medium">No action needed.</p>
-                  </div>
-                </div>
-
-                {/* Phone home indicator */}
-                <div className="flex justify-center mt-4">
-                  <div className="w-32 h-1 bg-white/20 rounded-full" />
-                </div>
+                <p className="text-white/40 text-xs sm:text-sm">per site</p>
+                <p className="text-white/60 text-xs sm:text-sm mt-2">For 1-4 locations</p>
               </div>
-            </div>
-          </AnimatedSection>
 
-          <AnimatedSection delay={200}>
-            <p className="text-center text-lg text-muted mt-12 max-w-xl mx-auto">
-              That&apos;s your 5-minute check-in. GhostWash handled the rest.
-            </p>
-          </AnimatedSection>
-        </div>
-      </section>
-
-      {/* Trust Section */}
-      <section className="py-20 md:py-32">
-        <div className="max-w-content mx-auto">
-          <AnimatedSection>
-            <h2 className="text-3xl md:text-display font-semibold tracking-tight text-center mb-12">
-              Built for car wash operators,
-              <br />
-              by people who understand the business
-            </h2>
-          </AnimatedSection>
-
-          <AnimatedSection delay={100}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-              {trustMetrics.map((metric) => (
-                <div
-                  key={metric.label}
-                  className="bg-surface border border-border rounded-xl p-6 text-center"
-                >
-                  <div className="text-2xl md:text-3xl font-semibold text-accent mb-1">
-                    {metric.value}
+              <div className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
+                {[
+                  'Churn prediction + intervention',
+                  'Payment recovery',
+                  'Member onboarding sequences',
+                  'Daily briefings',
+                  '0% commission forever',
+                  'Unlimited SMS & email',
+                  'Works with any POS'
+                ].map((feature, index) => (
+                  <div key={index} className="flex items-center gap-2.5 sm:gap-3">
+                    <Check className="w-4 h-4 text-white/40 flex-shrink-0" />
+                    <span className="text-white/60 text-xs sm:text-sm">{feature}</span>
                   </div>
-                  <div className="text-sm text-muted">{metric.label}</div>
-                </div>
-              ))}
-            </div>
-          </AnimatedSection>
-
-          <AnimatedSection delay={200}>
-            <p className="text-center text-muted">
-              GhostWash integrates with Washify, DRB Patheon, DRB SiteWatch, Sonny&apos;s, ICS,
-              Micrologic, NXT, and more.
-            </p>
-          </AnimatedSection>
-        </div>
-      </section>
-
-      {/* Competitive Comparison Section */}
-      <section className="py-20 md:py-32 bg-surface">
-        <div className="max-w-content mx-auto px-6">
-          <AnimatedSection>
-            <h2 className="text-3xl md:text-display font-semibold tracking-tight text-center mb-12">
-              How GhostWash compares
-            </h2>
-          </AnimatedSection>
-
-          <AnimatedSection delay={100}>
-            <div className="overflow-x-auto">
-              <table className="w-full max-w-4xl mx-auto">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="py-4 px-4 text-left text-sm font-medium text-muted"></th>
-                    <th className="py-4 px-4 text-center text-sm font-medium text-muted">Traditional Software</th>
-                    <th className="py-4 px-4 text-center text-sm font-medium text-muted">Human Call Centers</th>
-                    <th className="py-4 px-4 text-center text-sm font-medium text-accent">GhostWash</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {competitiveComparison.map((row, index) => (
-                    <tr key={row.row} className="border-b border-border/50">
-                      <td className="py-4 px-4 text-sm text-muted">{row.row}</td>
-                      <td className="py-4 px-4 text-center text-sm text-muted">{row.traditional}</td>
-                      <td className="py-4 px-4 text-center text-sm text-muted">{row.callCenter}</td>
-                      <td className="py-4 px-4 text-center text-sm text-white font-medium">{row.ghostwash}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 md:py-32">
-        <div className="max-w-content mx-auto px-6">
-          <AnimatedSection>
-            <h2 className="text-3xl md:text-display font-semibold tracking-tight text-center mb-4">
-              Simple pricing. No surprises.
-            </h2>
-          </AnimatedSection>
-
-          <AnimatedSection delay={50}>
-            <p className="text-center text-muted mb-8">
-              No contracts. No setup fees. No commission. Cancel anytime.
-            </p>
-          </AnimatedSection>
-
-          {/* Founding Operator Banner */}
-          <AnimatedSection delay={75}>
-            <div className="max-w-4xl mx-auto mb-8">
-              <div className="bg-accent/10 border border-accent/30 rounded-lg px-6 py-4 text-center">
-                <p className="text-white font-medium">
-                  Founding operator pricing: <span className="text-accent">$499/mo locked for life</span>. Limited to first 10 operators.
-                </p>
+                ))}
               </div>
-            </div>
-          </AnimatedSection>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {plans.map((plan, index) => (
-              <AnimatedSection key={plan.name} delay={100 + index * 100}>
-                <div
-                  className={`bg-black border rounded-xl p-8 h-full flex flex-col ${
-                    plan.highlighted ? 'border-accent' : 'border-border'
-                  }`}
-                >
-                  <div className="mb-6">
-                    <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
-                    <div className="flex items-baseline gap-2 mb-2">
-                      <span className="text-xl text-muted line-through">{plan.price}</span>
-                      <span className="text-4xl font-semibold text-accent">{plan.foundingPrice}</span>
-                      <span className="text-muted text-sm">{plan.period}</span>
-                    </div>
-                    <p className="text-muted text-sm">{plan.description}</p>
-                  </div>
+              <a
+                href="#waitlist"
+                className="block w-full text-center py-3 border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition"
+              >
+                Join the Waitlist
+              </a>
+            </motion.div>
 
-                  <ul className="space-y-3 mb-8 flex-grow">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-3 text-sm">
-                        <Check className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
-                        <span className="text-muted">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+            {/* Founding Operator - Highlighted */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="border-2 border-white p-6 sm:p-8 relative"
+            >
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] sm:text-xs font-medium px-2.5 sm:px-3 py-1">
+                RECOMMENDED
+              </div>
 
-                  <a
-                    href="#waitlist"
-                    className={`block text-center py-3 rounded-lg font-medium transition ${
-                      plan.highlighted
-                        ? 'bg-accent text-white hover:bg-accent-hover'
-                        : 'border border-border text-white hover:border-border-hover hover:bg-surface'
-                    }`}
-                  >
-                    Join the Waitlist
-                  </a>
+              <div className="mb-5 sm:mb-6">
+                <h3 className="text-lg sm:text-xl font-medium mb-2">Founding Operator</h3>
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-base sm:text-xl text-white/40 line-through">$849</span>
+                  <span className="text-3xl sm:text-4xl font-light text-white">$499</span>
+                  <span className="text-white/40 text-sm">/mo</span>
                 </div>
-              </AnimatedSection>
-            ))}
+                <p className="text-white/40 text-xs sm:text-sm">per site · locked for life</p>
+                <p className="text-white text-xs sm:text-sm mt-2">First 10 operators only</p>
+              </div>
+
+              <div className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
+                {[
+                  'Everything in Operator',
+                  'Priority onboarding',
+                  'Direct founder access',
+                  'Shape the product roadmap'
+                ].map((feature, index) => (
+                  <div key={index} className="flex items-center gap-2.5 sm:gap-3">
+                    <Check className="w-4 h-4 text-white flex-shrink-0" />
+                    <span className="text-white/80 text-xs sm:text-sm">{feature}</span>
+                  </div>
+                ))}
+              </div>
+
+              <a
+                href="#waitlist"
+                className="block w-full text-center py-3 bg-white text-black text-sm font-medium hover:bg-white/90 transition"
+              >
+                Join the Waitlist
+              </a>
+              <p className="text-center text-[10px] sm:text-xs text-white/40 mt-3">Only 10 spots remaining</p>
+            </motion.div>
+
+            {/* Portfolio */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="border border-white/10 p-6 sm:p-8 hover:border-white/20 transition-colors"
+            >
+              <div className="mb-5 sm:mb-6">
+                <h3 className="text-lg sm:text-xl font-medium mb-2">Portfolio</h3>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-3xl sm:text-4xl font-light">$1,249</span>
+                  <span className="text-white/40 text-sm">/mo</span>
+                </div>
+                <p className="text-white/40 text-xs sm:text-sm">per site</p>
+                <p className="text-white/60 text-xs sm:text-sm mt-2">For 5+ locations</p>
+              </div>
+
+              <div className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
+                {[
+                  'Everything in Operator',
+                  'Multi-site command center',
+                  'Cross-site benchmarking',
+                  'Dedicated account manager',
+                  'Volume discount on 10+ sites'
+                ].map((feature, index) => (
+                  <div key={index} className="flex items-center gap-2.5 sm:gap-3">
+                    <Check className="w-4 h-4 text-white/40 flex-shrink-0" />
+                    <span className="text-white/60 text-xs sm:text-sm">{feature}</span>
+                  </div>
+                ))}
+              </div>
+
+              <a
+                href="#waitlist"
+                className="block w-full text-center py-3 border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition"
+              >
+                Join the Waitlist
+              </a>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Waitlist Section */}
-      <section id="waitlist" className="py-20 md:py-32 bg-surface">
-        <div className="max-w-content mx-auto">
-          <AnimatedSection>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-display font-semibold tracking-tight mb-6">
-                Stop losing members in your sleep
-              </h2>
-              <p className="text-lg text-muted max-w-2xl mx-auto">
-                Join the waitlist to be among our founding operators. We&apos;ll connect to your
-                POS and show you exactly which members are at risk.
-              </p>
-            </div>
-          </AnimatedSection>
-
-          <AnimatedSection delay={100}>
-            <div className="max-w-2xl mx-auto">
-              <p className="text-sm text-muted text-center mb-6">
-                We&apos;re onboarding 10 founding operators with priority access and dedicated setup support.
-              </p>
-              <WaitlistForm />
-            </div>
-          </AnimatedSection>
+      {/* Waitlist */}
+      <section id="waitlist" className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 border-t border-white/5">
+        <div className="max-w-xl mx-auto text-center">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight mb-3 sm:mb-4">
+            Stop losing members
+          </h2>
+          <p className="text-white/50 text-base sm:text-lg mb-8 sm:mb-10">
+            Join the waitlist for early access.
+          </p>
+          <WaitlistForm />
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-12">
-        <div className="max-w-content mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="flex items-center gap-3">
-              <Logo className="w-8 h-10 text-white" />
-              <span className="text-lg font-semibold tracking-tight">GhostWash</span>
-            </div>
-
-            <nav className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
-              <a href="#features" className="text-sm text-muted hover:text-white transition">
-                Features
-              </a>
-              <a href="#pricing" className="text-sm text-muted hover:text-white transition">
-                Pricing
-              </a>
-              <a href="#waitlist" className="text-sm text-muted hover:text-white transition">
-                Join Waitlist
-              </a>
-              <Link href="/login" className="text-sm text-muted hover:text-white transition">
-                Sign In
-              </Link>
-            </nav>
-
-            <a
-              href="mailto:hello@ghostwash.ai"
-              className="text-sm text-muted hover:text-white transition"
-            >
-              hello@ghostwash.ai
-            </a>
+      <footer className="py-6 sm:py-8 px-4 sm:px-6 border-t border-white/5">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Logo className="w-5 h-6 text-white" />
+            <span className="font-medium">GhostWash</span>
           </div>
-
-          <div className="mt-12 pt-8 border-t border-border text-center">
-            <p className="text-sm text-muted">&copy; 2026 GhostWash</p>
+          <div className="flex gap-6 sm:gap-8 text-xs sm:text-sm text-white/40">
+            <a href="#features" className="hover:text-white transition">Features</a>
+            <a href="#pricing" className="hover:text-white transition">Pricing</a>
+            <a href="mailto:ghostwash.ai@gmail.com" className="hover:text-white transition">Contact</a>
           </div>
+          <div className="text-xs sm:text-sm text-white/40">© 2026 GhostWash</div>
         </div>
       </footer>
     </div>

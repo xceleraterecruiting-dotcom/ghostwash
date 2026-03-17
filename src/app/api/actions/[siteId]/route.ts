@@ -23,10 +23,17 @@ export async function GET(
 
     const supabase = createServerClient();
 
-    // Build query
+    // Build query - join with members to get names
     let query = supabase
       .from('agent_actions')
-      .select('*', { count: 'exact' })
+      .select(`
+        *,
+        members:target_id (
+          first_name,
+          last_name,
+          email
+        )
+      `, { count: 'exact' })
       .eq('site_id', siteId);
 
     if (agent !== 'all') {

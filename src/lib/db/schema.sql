@@ -217,6 +217,21 @@ CREATE TABLE pos_sync_log (
 CREATE INDEX idx_sync_site_date ON pos_sync_log(site_id, started_at DESC);
 
 -- ============================================================
+-- WAITLIST
+-- ============================================================
+CREATE TABLE IF NOT EXISTS waitlist (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  wash_name VARCHAR(255),
+  location_count VARCHAR(20),
+  pos_type VARCHAR(50),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_waitlist_email ON waitlist(email);
+
+-- ============================================================
 -- UPDATED_AT TRIGGER
 -- ============================================================
 CREATE OR REPLACE FUNCTION update_updated_at()
