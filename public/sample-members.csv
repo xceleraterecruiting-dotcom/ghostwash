@@ -1,0 +1,6 @@
+member_id,first_name,last_name,email,phone,plan_name,plan_price,start_date,status
+M001,John,Smith,john.smith@email.com,512-555-0101,Ultimate Unlimited,49.99,2024-01-15,active
+M002,Sarah,Johnson,sarah.j@email.com,512-555-0102,Premium Unlimited,39.99,2024-02-01,active
+M003,Mike,Williams,mike.w@email.com,512-555-0103,Basic Unlimited,29.99,2023-11-20,active
+M004,Emily,Brown,emily.b@email.com,512-555-0104,Ultimate Unlimited,49.99,2024-01-01,active
+M005,David,Garcia,david.g@email.com,512-555-0105,Premium Unlimited,39.99,2023-12-15,paused

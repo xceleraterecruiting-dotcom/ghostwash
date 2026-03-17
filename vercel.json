@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/churn-check",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/cc-recovery",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/onboarding",
+      "schedule": "0 10 * * *"
+    }
+  ]
+}

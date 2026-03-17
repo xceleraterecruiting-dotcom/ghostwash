@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 280" fill="none">
+  <!-- Water droplet shape -->
+  <path d="M100 10 C60 80, 20 140, 20 180 C20 240, 60 270, 100 270 C140 270, 180 240, 180 180 C180 140, 140 80, 100 10Z" fill="#1a1a2e"/>
+
+  <!-- Bubbles -->
+  <circle cx="175" cy="60" r="8" fill="#1a1a2e"/>
+  <circle cx="185" cy="85" r="5" fill="#1a1a2e"/>
+
+  <!-- Robot/Ghost body (white) -->
+  <ellipse cx="100" cy="140" rx="45" ry="50" fill="white"/>
+
+  <!-- Robot visor -->
+  <rect x="65" y="115" width="70" height="25" rx="12" fill="#1a1a2e"/>
+
+  <!-- Red eyes -->
+  <circle cx="82" cy="127" r="7" fill="#e53935"/>
+  <circle cx="118" cy="127" r="7" fill="#e53935"/>
+
+  <!-- Car body -->
+  <path d="M55 195 Q55 175, 75 175 L125 175 Q145 175, 145 195 L145 215 Q145 225, 135 225 L65 225 Q55 225, 55 215 Z" fill="white"/>
+
+  <!-- Car roof/windows -->
+  <path d="M70 175 Q70 160, 85 160 L115 160 Q130 160, 130 175 Z" fill="white"/>
+
+  <!-- Car windows (dark) -->
+  <path d="M75 175 Q75 165, 87 165 L100 165 L100 175 Z" fill="#1a1a2e"/>
+  <path d="M125 175 Q125 165, 113 165 L100 165 L100 175 Z" fill="#1a1a2e"/>
+
+  <!-- Headlights -->
+  <ellipse cx="65" cy="200" rx="6" ry="5" fill="#1a1a2e"/>
+  <ellipse cx="135" cy="200" rx="6" ry="5" fill="#1a1a2e"/>
+
+  <!-- Wheels -->
+  <ellipse cx="75" cy="230" rx="12" ry="8" fill="#1a1a2e"/>
+  <ellipse cx="125" cy="230" rx="12" ry="8" fill="#1a1a2e"/>
+</svg>

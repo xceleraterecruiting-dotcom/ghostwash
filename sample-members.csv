@@ -1,0 +1,21 @@
+member_id,first_name,last_name,email,phone,plan_name,plan_price,join_date,status,payment_status,last_wash_date,total_washes
+1001,Kevin,Harris,kevin.harris@email.com,+15551001001,Ultimate Wash,54.99,2024-06-15,active,declined,2025-11-15,45
+1002,Andrew,Adams,andrew.adams@email.com,+15551002002,Premium Wash,39.99,2024-08-20,active,declined,2025-12-05,38
+1003,Amanda,Wilson,amanda.wilson@email.com,+15551003003,Premium Wash,39.99,2024-09-10,active,declined,2025-12-20,32
+1004,Karen,Thompson,karen.thompson@email.com,+15551004004,Premium Wash,39.99,2024-05-01,active,current,2026-01-08,52
+1005,Brian,Anderson,brian.anderson@email.com,+15551005005,Premium Wash,39.99,2024-10-15,active,declined,2026-01-15,28
+1006,Michael,Chen,michael.chen@email.com,+15551006006,Ultimate Wash,54.99,2024-01-10,active,current,2026-03-15,89
+1007,Jennifer,Martinez,jennifer.martinez@email.com,+15551007007,Basic Wash,24.99,2024-11-20,active,current,2026-03-10,18
+1008,David,Brown,david.brown@email.com,+15551008008,Ultimate Wash,54.99,2024-07-05,active,current,2026-03-12,67
+1009,Lisa,Washington,lisa.washington@email.com,+15551009009,Basic Wash,24.99,2024-12-01,active,current,2026-02-28,12
+1010,Robert,Davis,robert.davis@email.com,+15551010010,Premium Wash,39.99,2024-04-15,active,current,2026-03-14,78
+1011,Patricia,Johnson,patricia.johnson@email.com,+15551011011,Premium Wash,39.99,2024-06-20,active,current,2026-02-20,55
+1012,James,Rodriguez,james.rodriguez@email.com,+15551012012,Basic Wash,24.99,2025-01-05,active,current,2026-03-08,15
+1013,Christopher,Lee,christopher.lee@email.com,+15551013013,Basic Wash,24.99,2024-09-25,active,current,2026-02-10,35
+1014,Daniel,Garcia,daniel.garcia@email.com,+15551014014,Ultimate Wash,54.99,2024-03-10,active,current,2026-03-01,82
+1015,Michelle,Taylor,michelle.taylor@email.com,+15551015015,Basic Wash,24.99,2024-08-15,active,current,2026-03-13,42
+1016,William,Jackson,william.jackson@email.com,+15551016016,Ultimate Wash,54.99,2024-02-28,active,current,2026-03-11,95
+1017,Nicole,Thomas,nicole.thomas@email.com,+15551017017,Basic Wash,24.99,2024-10-30,active,current,2026-02-25,28
+1018,Matthew,White,matthew.white@email.com,+15551018018,Premium Wash,39.99,2024-05-20,active,current,2026-03-14,61
+1019,Elizabeth,Harris,elizabeth.harris@email.com,+15551019019,Premium Wash,39.99,2024-07-15,active,current,2026-01-30,48
+1020,Anthony,Martin,anthony.martin@email.com,+15551020020,Basic Wash,24.99,2025-02-01,active,current,2026-03-12,8
